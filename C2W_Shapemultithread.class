@@ -1,0 +1,128 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class C2W_Shapemultithread extends Application {
+   private Canvas c2w_canvas;
+   private boolean c2w_running;
+   private C2W_Shapemultithread$c2w_Runner c2w_runner;
+   private Button c2w_startButton;
+
+   public C2W_Shapemultithread() {
+   }
+
+   public static void main(String[] var0) {
+      launch(var0);
+   }
+
+   public void start(Stage var1) {
+      this.c2w_canvas = new Canvas(640.0, 480.0);
+      this.c2w_redraw();
+      this.c2w_startButton = new Button("Start!");
+      this.c2w_startButton.setOnAction((var1x) -> {
+         this.c2w_doStartOrStop();
+      });
+      HBox var2 = new HBox(new Node[]{this.c2w_startButton});
+      var2.setStyle("-fx-padding: 6px; -fx-border-color: black; -fx-border-width: 3px 0 0 0");
+      var2.setAlignment(Pos.CENTER);
+      BorderPane var3 = new BorderPane(this.c2w_canvas);
+      var3.setBottom(var2);
+      Scene var4 = new Scene(var3);
+      var1.setScene(var4);
+      var1.setTitle("Click Start to make Random Art!");
+      var1.setResizable(false);
+      var1.show();
+   }
+
+   private void c2w_redraw() {
+      GraphicsContext var1 = this.c2w_canvas.getGraphicsContext2D();
+      double var2 = this.c2w_canvas.getWidth();
+      double var4 = this.c2w_canvas.getHeight();
+      if (!this.c2w_running) {
+         var1.setFill(Color.WHITE);
+         var1.fillRect(0.0, 0.0, var2, var4);
+      } else {
+         Color var6 = Color.hsb(1.0, 0.0, Math.random());
+         var1.setFill(var6);
+         var1.fillRect(0.0, 0.0, var2, var4);
+         int var7 = (int)(3.0 * Math.random());
+         int var8;
+         int var9;
+         int var10;
+         int var14;
+         switch (var7) {
+            case 0:
+               var1.setLineWidth(2.0);
+
+               for(var8 = 0; var8 < 500; ++var8) {
+                  var9 = (int)(var2 * Math.random());
+                  var10 = (int)(var4 * Math.random());
+                  var14 = (int)(var2 * Math.random());
+                  int var12 = (int)(var4 * Math.random());
+                  Color var13 = Color.hsb(360.0 * Math.random(), 1.0, 1.0);
+                  var1.setStroke(var13);
+                  var1.strokeLine((double)var9, (double)var10, (double)var14, (double)var12);
+               }
+
+               return;
+            case 1:
+               for(var8 = 0; var8 < 200; ++var8) {
+                  var9 = (int)(var2 * Math.random());
+                  var10 = (int)(var4 * Math.random());
+                  Color var11 = Color.hsb(360.0 * Math.random(), 1.0, 1.0);
+                  var1.setStroke(var11);
+                  var1.strokeOval((double)(var9 - 50), (double)var10, 100.0, 100.0);
+               }
+
+               return;
+            default:
+               var1.setStroke(Color.BLACK);
+               var1.setLineWidth(4.0);
+
+               for(var8 = 0; var8 < 25; ++var8) {
+                  var9 = (int)(var2 * Math.random());
+                  var10 = (int)(var4 * Math.random());
+                  var14 = 30 + (int)(170.0 * Math.random());
+                  Color var15 = Color.color(Math.random(), Math.random(), Math.random());
+                  var1.setFill(var15);
+                  var1.fillRect((double)(var9 - var14 / 2), (double)(var10 - var14 / 2), (double)var14, (double)var14);
+                  var1.strokeRect((double)(var9 - var14 / 2), (double)(var10 - var14 / 2), (double)var14, (double)var14);
+               }
+
+         }
+      }
+   }
+
+   private void c2w_doStartOrStop() {
+      if (!this.c2w_running) {
+         this.c2w_startButton.setText("Stop");
+         this.c2w_runner = new C2W_Shapemultithread$c2w_Runner(this, (C2W_Shapemultithread$1)null);
+         this.c2w_running = true;
+         this.c2w_runner.start();
+      } else {
+         this.c2w_startButton.setDisable(true);
+         this.c2w_running = false;
+         this.c2w_redraw();
+         this.c2w_runner.interrupt();
+
+         try {
+            this.c2w_runner.join(1000L);
+         } catch (InterruptedException var2) {
+         }
+
+         this.c2w_runner = null;
+         this.c2w_startButton.setText("Start");
+         this.c2w_startButton.setDisable(false);
+      }
+
+   }
+}
